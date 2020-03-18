@@ -1,10 +1,16 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+// 18-03-2020
+// created by Jan Hünermann
+
+#include <vector>
 #include <Eigen/Dense>
 
 using namespace std;
 using namespace Eigen;
+
+const double EPS = 1e-9;
 
 // { weight, abscissa }
 const std::vector<Vector2d> GAUSS_LENGENDRE_COEFFICIENTS = 

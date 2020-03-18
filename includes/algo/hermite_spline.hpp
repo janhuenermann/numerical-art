@@ -1,5 +1,8 @@
-#ifndef SPLINE_HPP
-#define SPLINE_HPP
+#ifndef HERMITE_SPLINE_HPP
+#define HERMITE_SPLINE_HPP
+
+// 18-03-2020
+// created by Jan Hünermann
 
 #include <array>
 

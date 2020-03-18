@@ -14,20 +14,22 @@ find_package(Eigen3 REQUIRED)
 include_directories(includes/ ${EIGEN3_INCLUDE_DIR} ${OpenCV_INCLUDE_DIR})
 
 # add lib
-add_library(algo STATIC src/algo/hermite_spline.cpp)
+add_library(algo STATIC src/algo/hermite_spline.cpp src/algo/b_spline.cpp)
 
 # add the executable
-# add_executable(example main.cpp)
-# add_dependencies(example spline_solver)
+add_executable(bspline src/examples/b_spline.cpp)
+add_dependencies(bspline algo)
 
 # link target
-# target_link_libraries(example spline_solver ${OpenCV_LIBS} ${Eigen3_LIBS})
+target_link_libraries(bspline algo ${OpenCV_LIBS} ${Eigen3_LIBS})
 
 # turn optimization on
 target_compile_options(algo PRIVATE -O3)
 
 # make sure install directory exsists
 file(MAKE_DIRECTORY ${INSTALL_DIR})
+file(MAKE_DIRECTORY ${INSTALL_DIR}/examples)
 
 # installation
 install(TARGETS algo DESTINATION ${INSTALL_DIR})
+install(TARGETS bspline DESTINATION ${INSTALL_DIR}/examples)
