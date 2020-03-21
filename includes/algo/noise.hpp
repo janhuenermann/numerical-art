@@ -119,6 +119,10 @@ namespace noise
         }
     };
 
+    typedef perlin<2> perlin2;
+    typedef perlin<3> perlin3;
+    typedef perlin<4> perlin4;
+
 
 };
 

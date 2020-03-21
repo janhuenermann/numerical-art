@@ -94,6 +94,7 @@ namespace noise
     template_perlin(2);
     template_perlin(3);
     template_perlin(4);
+    template_perlin(5);
 
 
 }
