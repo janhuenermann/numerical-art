@@ -6,6 +6,32 @@ using namespace std;
 using namespace noise;
 
 template<unsigned int Dims, class RNG, typename FloatingPoint>
+basePerlin<Dims, RNG, FloatingPoint>::basePerlin(int size[Dims], FloatingPoint resolution, uint32_t seed, RNG engine) : 
+    engine_(engine), 
+    resolution_(resolution)
+{
+    numel_ = 1;
+    for (int k = 0; k < Dims; ++k)
+    {
+        numel_ *= size[k];
+    }
+
+    for (int j = 0, n = 1; j < Dims; ++j, n *= 2)
+    {
+        for (int k = 0; k < n; ++k)
+        {
+            offsets_[k][j] = 0.0; // nearest point
+            offsets_[n+k] = offsets_[k];
+            offsets_[n+k][j] = 1.0; // further point
+        }
+    }
+
+    grid_ = new VectorNd[numel_];
+    memcpy(size_, size, Dims * sizeof(int));
+    reseed(seed);
+}
+
+template<unsigned int Dims, class RNG, typename FloatingPoint>
 void basePerlin<Dims, RNG, FloatingPoint>::reseed(uint32_t seed)
 {
     FloatingPoint norm;

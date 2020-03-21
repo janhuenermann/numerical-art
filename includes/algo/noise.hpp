@@ -22,33 +22,34 @@ namespace noise
 
         static_assert(Dims > 1);
 
-        basePerlin(int size[Dims], FloatingPoint resolution, RNG engine = RNG(), uint32_t seed = default_random_engine::default_seed) : 
-            engine_(engine), resolution_(resolution)
-        {
-            numel_ = 1;
-            for (int k = 0; k < Dims; ++k)
-            {
-                numel_ *= size[k];
-            }
-
-            for (int j = 0, n = 1; j < Dims; ++j, n *= 2)
-            {
-                for (int k = 0; k < n; ++k)
-                {
-                    offsets_[k][j] = 0.0; // nearest point
-                    offsets_[n+k] = offsets_[k];
-                    offsets_[n+k][j] = 1.0; // further point
-                }
-            }
-
-            grid_ = new VectorNd[numel_];
-            memcpy(size_, size, Dims * sizeof(int));
-            reseed(seed);
-        }
-
+        /**
+         * @param size          Grid size, the higher, the more random, but the greater memory and computational cost.
+         * @param resolution    Scales the grid
+         * @param seed          Initial seed
+         * @param engine        Random number generator
+         */
+        basePerlin(int size[Dims], FloatingPoint resolution, uint32_t seed = default_random_engine::default_seed, RNG engine = RNG());
+        
+        /**
+         * Generates a perlin noise scalar at position v.
+         * @param  v Position
+         * @return   Noise
+         */
         FloatingPoint noise(VectorNd v);
+
+        /**
+         * Reseeds underlying grid.
+         * @param seed
+         */
         void reseed(uint32_t seed);
 
+    protected:
+
+        /**
+         * Returns gradient at respective position. Tiled.
+         * @param  p [description]
+         * @return   [description]
+         */
         inline VectorNd gradient(VectorNd p)
         {
             int k = (int)p[0] % size_[0];
@@ -61,15 +62,12 @@ namespace noise
             return grid_[k];
         }
 
-    protected:
         int numel_;
         int size_[Dims];
         VectorNd *grid_;
         VectorNd offsets_[Corners];
         FloatingPoint resolution_;
         RNG engine_;
-
-        // used during noise generation
     };
 
     template<unsigned int Dims, class RNG = mt19937_64, typename FloatingPoint = float>
