@@ -1,7 +1,7 @@
 CMakeFiles
 CMakeCache.txt
 install_manifest.txt
-Makefile
+/Makefile
 .DS_Store
 cmake_install.cmake
 bin/

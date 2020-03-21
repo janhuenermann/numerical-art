@@ -7,7 +7,7 @@
 using namespace std;
 
 template<int Order, int Dims>
-typename BSpline<Order, Dims>::VectorNd BSpline<Order, Dims>::interpolate(double tau) const
+int BSpline<Order, Dims>::findK(double tau) const
 {
     const int p = Order;
     const int n = knots.size();
@@ -25,11 +25,11 @@ typename BSpline<Order, Dims>::VectorNd BSpline<Order, Dims>::interpolate(double
 
         if (knots[k] > tau)
         {
-            L = k + 1;
+            R = k - 1;
         }
         else if (knots[k+1] < tau)
         {
-            R = k - 1;
+            L = k + 2;
         }
         else
         {
@@ -37,7 +37,13 @@ typename BSpline<Order, Dims>::VectorNd BSpline<Order, Dims>::interpolate(double
         }
     }
 
-    return interpolate(tau, L);
+    return L;
+}
+
+template<int Order, int Dims>
+typename BSpline<Order, Dims>::VectorNd BSpline<Order, Dims>::interpolate(double tau) const
+{
+    return interpolate(tau, findK(tau));
 }
 
 template<int Order, int Dims>
@@ -100,7 +106,31 @@ void BSpline<Order, Dims>::walk(double delta, void (*fn)(VectorNd pt, const BSpl
 }
 
 template<int Order, int Dims>
-BSpline<Order, Dims> BSpline<Order, Dims>::create(vector<double> knots, vector<VectorNd> control_points)
+void BSpline<Order, Dims>::walk(double delta, void (*fn)(VectorNd pt, const BSpline &), double a, double b) const
+{
+    const int p = Order;
+    int k = max((int)Order, findK(a));
+    int m = min((int)knots.size() - p - 1, findK(b));
+    cout << k << endl;
+    if (m < 0)
+    {
+        return ;
+    }
+
+    double tau = knots[k];
+
+    while (k < m)
+    {
+        VectorNd pt = interpolate(tau, k);
+        fn(pt, *this);
+
+        tau += delta;
+        if (tau >= knots[k+1]) ++k;
+    }
+}
+
+template<int Order, int Dims>
+BSpline<Order, Dims> BSpline<Order, Dims>::create(vector<double> knots, vector<VectorNd> control_points, bool repeat_begin, bool repeat_end)
 {
     assert(knots.size() >= 2);
 
@@ -110,11 +140,17 @@ BSpline<Order, Dims> BSpline<Order, Dims>::create(vector<double> knots, vector<V
     // pad
     for (int j = 0; j < p; ++j)
     {
-        knots.insert(knots.end(), knots[n-1+j]);
-        control_points.insert(control_points.end(), control_points[n-1+j]);
-
-        knots.insert(knots.begin(), knots[j]);
-        control_points.insert(control_points.begin(), control_points[j]);
+        if (repeat_end)
+        {
+            knots.insert(knots.end(), knots[n-1+j]);
+            control_points.insert(control_points.end(), control_points[n-1+j]);
+        }
+        
+        if (repeat_begin)
+        {
+            knots.insert(knots.begin(), knots[j]);
+            control_points.insert(control_points.begin(), control_points[j]);
+        }
     }
 
     BSpline<Order, Dims> sp;

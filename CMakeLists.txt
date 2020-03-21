@@ -26,10 +26,15 @@ add_dependencies(bspline algo)
 add_executable(perlin_noise src/examples/perlin_noise.cpp)
 add_dependencies(perlin_noise algo)
 
+add_executable(circle src/examples/circle.cpp)
+add_dependencies(circle algo)
+
 # link target
 target_link_libraries(bspline algo ${OpenCV_LIBS} ${Eigen3_LIBS})
 target_link_libraries(perlin_noise algo ${OpenCV_LIBS} ${Eigen3_LIBS})
+target_link_libraries(circle algo ${OpenCV_LIBS} ${Eigen3_LIBS})
 
 # turn optimization on
 target_compile_options(algo PRIVATE ${OPTIM_FLAGS})
 target_compile_options(perlin_noise PRIVATE ${OPTIM_FLAGS})
+target_compile_options(circle PRIVATE ${OPTIM_FLAGS})

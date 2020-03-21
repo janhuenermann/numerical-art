@@ -12,7 +12,7 @@ using namespace cv;
 using namespace Eigen;
 
 const string WINDOW_1 = "w1";
-const int SplineOrder = 8;
+const int SplineOrder = 4;
 
 Mat3f frame(1080, 1920);
 const double scale = (double)max(frame.cols, frame.rows);

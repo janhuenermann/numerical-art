@@ -3,6 +3,7 @@
 
 #include <random>
 #include <Eigen/Core>
+#include <iostream>
 
 using namespace std;
 using namespace Eigen;
@@ -10,7 +11,7 @@ using namespace Eigen;
 namespace noise
 {
 
-    template<unsigned int Dims, class RNG = mt19937_64, typename FloatingPoint = float>
+    template<unsigned int Dims, class RNG = mt19937_64, typename FloatingPoint = double>
     class basePerlin
     {
     public:
@@ -28,14 +29,19 @@ namespace noise
          * @param seed          Initial seed
          * @param engine        Random number generator
          */
-        basePerlin(int size[Dims], FloatingPoint resolution, uint32_t seed = default_random_engine::default_seed, RNG engine = RNG());
-        
+        basePerlin(const int size[Dims], FloatingPoint resolution, uint32_t seed = default_random_engine::default_seed, RNG engine = RNG());
+
         /**
          * Generates a perlin noise scalar at position v.
          * @param  v Position
          * @return   Noise
          */
-        FloatingPoint noise(VectorNd v);
+        FloatingPoint noise(const VectorNd v);
+
+        inline FloatingPoint operator () (const VectorNd &v)
+        {
+            return noise(v);
+        }
 
         /**
          * Reseeds underlying grid.
@@ -70,7 +76,7 @@ namespace noise
         RNG engine_;
     };
 
-    template<unsigned int Dims, class RNG = mt19937_64, typename FloatingPoint = float>
+    template<unsigned int Dims, class RNG = mt19937_64, typename FloatingPoint = double>
     class perlin : public basePerlin<Dims, RNG, FloatingPoint>
     {};
 
@@ -83,10 +89,15 @@ namespace noise
         using basePerlin<2, RNG, FloatingPoint>::basePerlin;
         using basePerlin<2, RNG, FloatingPoint>::noise;
 
-        FloatingPoint noise(FloatingPoint x, FloatingPoint y)
+        inline FloatingPoint noise(FloatingPoint x, FloatingPoint y)
         {
             return noise(VectorNd(x, y));
         }
+
+        // inline FloatingPoint operator () (FloatingPoint x, FloatingPoint y)
+        // {
+        //     return noise(x, y);
+        // }
     };
 
     template<class RNG, typename FloatingPoint>

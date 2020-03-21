@@ -28,6 +28,8 @@ struct BSpline
     VectorNd interpolate(double tau) const;
     VectorNd interpolate(double tau, int k) const;
 
+    int findK(double tau) const;
+
     /**
      * Walks the spline.
      *
@@ -35,6 +37,7 @@ struct BSpline
      * @param fn     Callback
      */
     void walk(double delta, void (*fn)(VectorNd pt, const BSpline &)) const;
+    void walk(double delta, void (*fn)(VectorNd pt, const BSpline &), double a, double b) const;
 
     /**
      * Creates a spline from knots (numbers in support), and control points.
@@ -42,8 +45,14 @@ struct BSpline
      * @param  control_points The vectors at each knot point.
      * @return                BSpline
      */
-    static BSpline create(vector<double> knots, vector<VectorNd> control_points);
+    static BSpline create(vector<double> knots, vector<VectorNd> control_points, bool repeat_begin = true, bool repeat_end = true);
 
 };
+
+template<int Order>
+using BSpline2 = BSpline<Order, 2>;
+
+template<int Order>
+using BSpline3 = BSpline<Order, 3>;
 
 #endif

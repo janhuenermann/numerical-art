@@ -1,12 +1,11 @@
 #include <algo/noise.hpp>
-#include <iostream>
 #include <cmath>
 
 using namespace std;
 using namespace noise;
 
 template<unsigned int Dims, class RNG, typename FloatingPoint>
-basePerlin<Dims, RNG, FloatingPoint>::basePerlin(int size[Dims], FloatingPoint resolution, uint32_t seed, RNG engine) : 
+basePerlin<Dims, RNG, FloatingPoint>::basePerlin(const int size[Dims], FloatingPoint resolution, uint32_t seed, RNG engine) : 
     engine_(engine), 
     resolution_(resolution)
 {
@@ -57,7 +56,7 @@ void basePerlin<Dims, RNG, FloatingPoint>::reseed(uint32_t seed)
 }
 
 template<unsigned int Dims, class RNG, typename FloatingPoint>
-FloatingPoint basePerlin<Dims, RNG, FloatingPoint>::noise(VectorNd v)
+FloatingPoint basePerlin<Dims, RNG, FloatingPoint>::noise(const VectorNd v)
 {
     Matrix<FloatingPoint, Corners, 1> _dots;
     VectorNd v0 = v / resolution_;
