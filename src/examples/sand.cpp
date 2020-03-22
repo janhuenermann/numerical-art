@@ -92,16 +92,17 @@ void draw(CairoCtxPtr ctx, mt19937& eng)
 
     uniform_real_distribution image_pt(0.0, 1.0);
     uniform_real_distribution prob(0.0, 1.0);
+    binomial_distribution count_dist(20, 0.5);
 
     uniform_int_distribution type_dist(0, 2);
 
-    const int edge = 100;
-    int n = 0, type, m = 0;
+    const double edge = 100.0;
+    int n = 0, type, m = 0, M = count_dist(eng);
 
     while (1)
     {
         // if we reach an edge, make new shape
-        while (get_distance_to_border(origin, size) <= 50.0 || get_distance_to_border(dst, size) <= 50.0)
+        while (get_distance_to_border(origin, size) <= edge || get_distance_to_border(dst, size) <= edge)
         {
             do
             {
@@ -110,8 +111,8 @@ void draw(CairoCtxPtr ctx, mt19937& eng)
                 dst = Vector2d(image_pt(eng), image_pt(eng)).cwiseProduct(size);
                 delta = sample_delta(eng);
 
-            } while (get_distance_to_border(origin + 20.0 * delta, size) < 50.0
-                  || get_distance_to_border(dst + 20.0 * delta, size) < 50.0);
+            } while (get_distance_to_border(origin + 20.0 * delta, size) < edge
+                  || get_distance_to_border(dst + 20.0 * delta, size) < edge);
             
             n = 0;
         }
@@ -122,7 +123,7 @@ void draw(CairoCtxPtr ctx, mt19937& eng)
         }
 
         // at max 5 shapes
-        if (m > 5)
+        if (m > M)
         {
             return ;
         }
