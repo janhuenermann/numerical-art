@@ -64,7 +64,7 @@ void draw_z(CairoCtxPtr ctx, double z, double w, noise::perlin5& pn)
         Vector2d p0 = center + Vector2d(cos(rad) * radius, sin(rad) * radius);
 
         Vector5d p1;
-        p1 << p0.x(), p0.y(), 10.0 * z, 30 * cos(w), 30 * sin(w);
+        p1 << p0.x(), p0.y(), 12.0 * z, 30 * cos(w), 30 * sin(w);
 
         double r = (radius + radius * 1.2 * pn(p1)) / z;
         Vector2d p = center + Vector2d(cos(rad) * r, sin(rad) * r);
@@ -85,10 +85,9 @@ void draw_z(CairoCtxPtr ctx, double z, double w, noise::perlin5& pn)
 
 void draw(CairoCtxPtr ctx, noise::perlin5 &pn, double w)
 {
-    for (double z = 1.0; z < 8.0;)
+    for (double z = 8.0; z >= 1.0; z /= 1.1)
     {
         draw_z(ctx, z, w, pn);
-        z *= 1.1;
     }
 }
 
