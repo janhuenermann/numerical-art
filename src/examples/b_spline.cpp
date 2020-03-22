@@ -35,7 +35,7 @@ BSpline<SplineOrder, 2> generate_spline()
     return BSpline<SplineOrder, 2>::create(knots, cp);
 }
 
-void draw(Vector2d pt, const BSpline<SplineOrder, 2>& sp)
+void draw(Vector2d pt, const BSpline<SplineOrder, 2>& sp, void* payload)
 {
     circle(frame, Point((int)(pt.x() * scale), (int)(pt.y() * scale)), 5.0, Scalar(0.0f, 0.0f, 1.0f), FILLED);
 }
@@ -48,7 +48,7 @@ void invoke(Vector2i pt)
     if (points.size() >= 2)
     {
         BSpline<SplineOrder, 2> sp = generate_spline();
-        sp.walk(0.01, &draw);
+        sp.walk(0.01, &draw, nullptr);
     }
     
     for (int k = 0; k < points.size(); ++k)

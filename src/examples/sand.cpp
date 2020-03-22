@@ -114,7 +114,7 @@ void draw(CairoCtxPtr ctx, noise::perlin3 &pn)
 int main(int argc, char **argv)
 {
     int noise_size[5] = { 10, 10, 10 };
-    noise::perlin3 pn(noise_size, 100.0, 123 << 5);
+    noise::perlin3 pn(noise_size, 100.0);
 
     generative::collection(128, 1600, 1600, [&](CairoCtxPtr ctx) {
         ctx->save(); // save the state of the context
