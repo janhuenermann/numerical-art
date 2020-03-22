@@ -51,14 +51,13 @@ void draw_point_series(CairoCtxPtr ctx, Vector2d origin, Vector2d dst, mt19937 &
     ctx->restore();
 }
 
-void draw(CairoCtxPtr ctx, noise::perlin3 &pn)
+void draw(CairoCtxPtr ctx, mt19937& eng)
 {
-    mt19937::result_type seed = time(0);
-    mt19937 eng(seed);
-
-    int w = 1600, h = 1600;
+    Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::RefPtr<Cairo::ImageSurface>::cast_static(ctx->get_group_target());
+    
+    const int w = surf->get_width(), h = surf->get_height();
+    Vector2d size((double)w, (double)h);
     Vector2d origin, dst, delta;
-    Vector2d size(w, h);
 
     uniform_real_distribution image_pt(0.0, 1.0);
     uniform_real_distribution delta_vec(-1.0, 1.0);
@@ -66,11 +65,12 @@ void draw(CairoCtxPtr ctx, noise::perlin3 &pn)
 
     uniform_int_distribution type_dist(0, 2);
 
-    int n = 0, type, m = 0;
     const int edge = 100;
+    int n = 0, type, m = 0;
 
     for (; m < 21; )
     {
+        // if we reach an edge, make new shape
         while (origin.x() < edge || dst.x() < edge || origin.x() > w - edge || dst.x() > w - edge 
             || origin.y() < edge || dst.y() < edge || origin.y() > h - edge || dst.y() > h - edge)
         {
@@ -90,38 +90,47 @@ void draw(CairoCtxPtr ctx, noise::perlin3 &pn)
         // draw sparse lines
         draw_point_series(ctx, origin, dst, eng);
 
-//        const Vector2d pos = (origin + dst) / 2;
-//        const double P = pn.noise(pos.x(), pos.y(), 0.0) / M_SQRT2 + 0.5;
-        if (prob(eng) < 0.01)
+        // switch type of shape with 1% chance
+        if (n == 0 || prob(eng) < 0.01)
+        {
             type = type_dist(eng);
+        }
 
-        if (type == 0)
+        switch (type)
         {
-            origin += delta;
+            case 0:
+                origin += delta;
+                break ;
+            case 1:
+                dst += delta;
+                break;
+            default:
+            case 2:
+                origin += delta;
+                dst += delta;
+                break ;
         }
-        else if (type == 1)
-        {
-            dst += delta;
-        }
-        else 
-        {
-            origin += delta;
-            dst += delta;
-        }
+
+        ++n;
     }
 }
 
 int main(int argc, char **argv)
 {
-    int noise_size[5] = { 10, 10, 10 };
-    noise::perlin3 pn(noise_size, 100.0);
+    const int w = 1600, h = 1600;
 
-    generative::collection(128, 1600, 1600, [&](CairoCtxPtr ctx) {
+    int k = 0;
+    mt19937::result_type seed = time(0);
+
+    generative::collection(128, w, h, [&](CairoCtxPtr ctx) {
+        mt19937 eng(seed + (++k));
+
         ctx->save(); // save the state of the context
         ctx->set_source_rgb(1.0, 1.0, 1.0);
         ctx->paint(); // fill image with the color
         ctx->restore(); // color is back to black now
-        draw(ctx, pn);
+
+        draw(ctx, eng);
     }, "artworks/sand2");
 
     destroyAllWindows();
