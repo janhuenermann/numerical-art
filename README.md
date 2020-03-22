@@ -21,3 +21,11 @@ Uses cairo as a drawing library, Eigen3 for math, OpenCV for displaying and I/O,
 <img src="artworks/02/rendering.jpg" width="350" />
 
 > Artwork 02
+
+### Inspiration
+In some of the artworks, I took huge inspiration from the following sources. Good artists copy, great artists steal. ;)
+
+- [art.daneden.me](https://art.daneden.me/)
+- [inconvergent](https://inconvergent.net/generative/)
+- [complexification](http://www.complexification.net/gallery/)
+- [n-e-r-v-o-u-s](https://n-e-r-v-o-u-s.com)
