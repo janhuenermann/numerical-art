@@ -5,7 +5,7 @@
 - [ ] Init random circles (rand radius), assign them random frequencies, do FT drawing.
 
 ### Artworks
-<img src="artworks/01/rendering.png" width="350" />
+<img src="artworks/01/rendering-2.jpg" width="350" />
 
 > Artwork 01
 
