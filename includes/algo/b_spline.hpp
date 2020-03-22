@@ -36,7 +36,7 @@ struct BSpline
      * @param delta  Resolution
      * @param fn     Callback
      */
-    void walk(double delta, void (*fn)(VectorNd pt, const BSpline &)) const;
+    void walk(double delta, void (*fn)(VectorNd pt, const BSpline &, void *payload), void *payload = nullptr) const;
     void walk(double delta, void (*fn)(VectorNd pt, const BSpline &), double a, double b) const;
 
     /**

@@ -5,7 +5,7 @@ using namespace std;
 using namespace noise;
 
 template<unsigned int Dims, class RNG, typename FloatingPoint>
-basePerlin<Dims, RNG, FloatingPoint>::basePerlin(const int size[Dims], FloatingPoint resolution, uint32_t seed, RNG engine) : 
+basePerlin<Dims, RNG, FloatingPoint>::basePerlin(const int size[Dims], FloatingPoint resolution, RNG engine) : 
     engine_(engine), 
     resolution_(resolution)
 {
@@ -27,15 +27,14 @@ basePerlin<Dims, RNG, FloatingPoint>::basePerlin(const int size[Dims], FloatingP
 
     grid_ = new VectorNd[numel_];
     memcpy(size_, size, Dims * sizeof(int));
-    reseed(seed);
+    reseed();
 }
 
 template<unsigned int Dims, class RNG, typename FloatingPoint>
-void basePerlin<Dims, RNG, FloatingPoint>::reseed(uint32_t seed)
+void basePerlin<Dims, RNG, FloatingPoint>::reseed()
 {
     FloatingPoint norm;
 
-    engine_.seed(seed);
     uniform_real_distribution dist(-1.0, 1.0);
 
     for (int k = 0; k < numel_; ++k)

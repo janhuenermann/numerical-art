@@ -82,7 +82,7 @@ typename BSpline<Order, Dims>::VectorNd BSpline<Order, Dims>::interpolate(double
 }
 
 template<int Order, int Dims>
-void BSpline<Order, Dims>::walk(double delta, void (*fn)(VectorNd pt, const BSpline &)) const
+void BSpline<Order, Dims>::walk(double delta, void (*fn)(VectorNd pt, const BSpline &, void *payload), void *payload) const
 {
     const int p = Order;
     int k = Order;
@@ -98,7 +98,7 @@ void BSpline<Order, Dims>::walk(double delta, void (*fn)(VectorNd pt, const BSpl
     while (k < m)
     {
         VectorNd pt = interpolate(tau, k);
-        fn(pt, *this);
+        fn(pt, *this, payload);
 
         tau += delta;
         if (tau >= knots[k+1]) ++k;

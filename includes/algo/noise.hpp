@@ -26,10 +26,9 @@ namespace noise
         /**
          * @param size          Grid size, the higher, the more random, but the greater memory and computational cost.
          * @param resolution    Scales the grid
-         * @param seed          Initial seed
          * @param engine        Random number generator
          */
-        basePerlin(const int size[Dims], FloatingPoint resolution, uint32_t seed = default_random_engine::default_seed, RNG engine = RNG());
+        basePerlin(const int size[Dims], FloatingPoint resolution, RNG engine = RNG());
 
         /**
          * Generates a perlin noise scalar at position v.
@@ -45,9 +44,8 @@ namespace noise
 
         /**
          * Reseeds underlying grid.
-         * @param seed
          */
-        void reseed(uint32_t seed);
+        void reseed();
 
     protected:
 
