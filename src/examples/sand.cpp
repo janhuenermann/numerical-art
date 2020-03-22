@@ -6,6 +6,7 @@
 #include <Eigen/Dense>
 #include <chrono>
 #include <algorithm>
+#include <math.h>
 
 #include <random>
 
@@ -31,7 +32,7 @@ void draw_point_series(CairoCtxPtr ctx, Vector2d origin, Vector2d dst, mt19937 &
 
     const Vector2d d = dst-origin;
     const double len = d.norm();
-    const double offset = 3.5;
+    const double offset = 4.0;
     const Vector2d dd = d/len * offset;
     Vector2d p = origin;
 
@@ -51,16 +52,45 @@ void draw_point_series(CairoCtxPtr ctx, Vector2d origin, Vector2d dst, mt19937 &
     ctx->restore();
 }
 
+Vector2d sample_delta(mt19937 &eng)
+{
+    uniform_real_distribution ang_dist(0.0, 2.0 * M_PI);
+    double ang = ang_dist(eng);
+    return 4.0 * Vector2d(cos(ang), sin(ang));
+}
+
+Vector2d sample_new_delta(mt19937 &eng, Vector2d old_delta, Vector2d ab)
+{
+    double ab_ang = atan2(ab.y(), ab.x());
+
+    // only allow new delta vector that points to the same side of origin->dst vector as old delta
+    uniform_real_distribution ang_dist(0.0, M_PI);
+    double ang = ang_dist(eng);
+
+    Vector3d v1(old_delta.x(), old_delta.y(), 0);
+    Vector3d v2(ab.x(), ab.y(), 0);
+    Vector3d v3 = v2.cross(v1); // cross product tells us how angle is oriented
+
+    ang = ang * copysign(1.0, v3.z());
+
+    return 4.0 * Vector2d(cos(ab_ang + ang), sin(ab_ang + ang));
+}
+
+double get_distance_to_border(Vector2d p, Vector2d size)
+{
+    Vector2d d = size - p;
+    return min(min(p.x(), p.y()), min(d.x(), d.y()));
+}
+
 void draw(CairoCtxPtr ctx, mt19937& eng)
 {
     Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::RefPtr<Cairo::ImageSurface>::cast_static(ctx->get_group_target());
     
     const int w = surf->get_width(), h = surf->get_height();
     Vector2d size((double)w, (double)h);
-    Vector2d origin, dst, delta;
+    Vector2d origin(0,0), dst(0,0), delta(0,0);
 
     uniform_real_distribution image_pt(0.0, 1.0);
-    uniform_real_distribution delta_vec(-1.0, 1.0);
     uniform_real_distribution prob(0.0, 1.0);
 
     uniform_int_distribution type_dist(0, 2);
@@ -68,29 +98,45 @@ void draw(CairoCtxPtr ctx, mt19937& eng)
     const int edge = 100;
     int n = 0, type, m = 0;
 
-    for (; m < 21; )
+    while (1)
     {
         // if we reach an edge, make new shape
-        while (origin.x() < edge || dst.x() < edge || origin.x() > w - edge || dst.x() > w - edge 
-            || origin.y() < edge || dst.y() < edge || origin.y() > h - edge || dst.y() > h - edge)
+        while (get_distance_to_border(origin, size) <= 50.0 || get_distance_to_border(dst, size) <= 50.0)
         {
-            origin = Vector2d(image_pt(eng), image_pt(eng)).cwiseProduct(size);
-            dst = Vector2d(image_pt(eng), image_pt(eng)).cwiseProduct(size);
-
             do
             {
-                delta = Vector2d(delta_vec(eng), delta_vec(eng));
-            } while (delta.norm() > 1.0);
 
-            delta = delta / delta.norm() * 3.0;
+                origin = Vector2d(image_pt(eng), image_pt(eng)).cwiseProduct(size);
+                dst = Vector2d(image_pt(eng), image_pt(eng)).cwiseProduct(size);
+                delta = sample_delta(eng);
+
+            } while (get_distance_to_border(origin + 20.0 * delta, size) < 50.0
+                  || get_distance_to_border(dst + 20.0 * delta, size) < 50.0);
+            
             n = 0;
-            ++m;
+        }
+
+        if (n == 0)
+        {
+            m++;
+        }
+
+        // at max 5 shapes
+        if (m > 5)
+        {
+            return ;
+        }
+
+        // 1% chance to switch delta, new delta cannot go into existing lines
+        if (n > 0 && prob(eng) < 0.01)
+        {
+            delta = sample_new_delta(eng, delta, dst-origin);
         }
 
         // draw sparse lines
         draw_point_series(ctx, origin, dst, eng);
 
-        // switch type of shape with 1% chance
+        // 1% chance to switch type of shape
         if (n == 0 || prob(eng) < 0.01)
         {
             type = type_dist(eng);
