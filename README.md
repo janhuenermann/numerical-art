@@ -8,3 +8,7 @@
 <img src="artworks/01/rendering.png" width="350" />
 
 > Artwork 01
+
+<img src="artworks/02/rendering.jpg" width="350" />
+
+> Artwork 02
