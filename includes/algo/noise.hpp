@@ -78,7 +78,9 @@ namespace noise
 
     template<unsigned int Dims, class RNG = mt19937_64, typename FloatingPoint = double>
     class perlin : public basePerlin<Dims, RNG, FloatingPoint>
-    {};
+    {
+        using basePerlin<Dims, RNG, FloatingPoint>::basePerlin;
+    };
 
     template<class RNG, typename FloatingPoint>
     class perlin<2, RNG, FloatingPoint> : public basePerlin<2, RNG, FloatingPoint>
@@ -133,6 +135,7 @@ namespace noise
     typedef perlin<2> perlin2;
     typedef perlin<3> perlin3;
     typedef perlin<4> perlin4;
+    typedef perlin<5> perlin5;
 
 
 };
