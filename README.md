@@ -22,6 +22,10 @@ Uses cairo as a drawing library, Eigen3 for math, OpenCV for displaying and I/O,
 
 > Artwork 02
 
+<img src="artworks/noise-field.jpg" width="350" />
+
+> Artwork 03
+
 ### Inspiration
 In some of the artworks, I took huge inspiration from the following sources. Good artists copy, great artists steal. ;)
 

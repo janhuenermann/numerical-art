@@ -47,12 +47,16 @@ add_dependencies(circle algo)
 add_executable(sand src/examples/sand.cpp)
 add_dependencies(sand algo)
 
+add_executable(random_flows src/examples/random_flows.cpp)
+add_dependencies(random_flows algo)
+
 # link target
 target_link_libraries(algo ${OpenCV_LIBS} ${Eigen3_LIBS} ${Cairomm_LIBRARIES} OpenMP::OpenMP_CXX)
 target_link_libraries(bspline algo ${OpenCV_LIBS} ${Eigen3_LIBS})
 target_link_libraries(perlin_noise algo ${OpenCV_LIBS} ${Eigen3_LIBS})
 target_link_libraries(circle algo ${OpenCV_LIBS} ${Eigen3_LIBS})
 target_link_libraries(sand algo ${OpenCV_LIBS} ${Eigen3_LIBS} ${Cairomm_LIBRARIES} ${CAIRO_LIBRARIES} OpenMP::OpenMP_CXX)
+target_link_libraries(random_flows algo ${OpenCV_LIBS} ${Eigen3_LIBS} ${Cairomm_LIBRARIES} ${CAIRO_LIBRARIES} OpenMP::OpenMP_CXX)
 
 # turn optimization on
 target_compile_options(algo PRIVATE ${OPTIM_FLAGS})

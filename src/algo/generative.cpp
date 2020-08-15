@@ -83,7 +83,7 @@ void collection(int num, int w, int h, function<void (CairoCtxPtr)> logic, strin
 
         char num[5];
         snprintf (num, 5, "%04d", k);
-        imwrite(folder + "/seq_" + string(num) + ".jpg", resized);
+        imwrite(folder + "/seq_" + string(num) + ".png", resized);
 
         cout << "Wrote image " << setw(4) << setfill('0') << num << endl;
     }
